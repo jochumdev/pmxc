@@ -34,6 +34,7 @@ PERFORMANCE_REQUIRES = [
 ]
 
 DEVELOPMENT_REQUIRES = [
+    'pycodestyle==2.3.1', # version pin for flake8 and prospector
     'pylint',
     'autopep8',
     'flake8',
