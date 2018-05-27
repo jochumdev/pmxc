@@ -1,0 +1,9 @@
+# Editor
+.vscode/
+
+# Playground
+playground/
+
+__pycache__/
+*.egg-info
+venv/
