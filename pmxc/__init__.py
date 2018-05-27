@@ -7,4 +7,4 @@ __all__ = [
 ]
 
 __version__ = "5.2.0.0"
-DEFAULT_CONFIG_FILE = os.getenv('PMXC_CONFIG', os.path.join(os.path.expanduser("~"), "config", "pmxc", 'config.yaml'))
+DEFAULT_CONFIG_FILE = os.getenv('PMXC_CONFIG', os.path.join(os.path.expanduser("~"), ".config", "pmxc", 'config.yaml'))
