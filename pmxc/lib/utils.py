@@ -3,6 +3,8 @@ import os
 import platform
 import re
 import shutil
+import string
+import random
 
 
 __all__ = [
@@ -11,6 +13,9 @@ __all__ = [
     'SPICE_VIEWER_PATHS',
     'parse_key_value_string',
     'get_vmid_resource',
+    'is_cygwin',
+    'find_path',
+    'randstring',
 ]
 
 REMOTE_RE = re.compile(r'^(?P<remote>[\w\d\.\-\_]+):?')
@@ -21,6 +26,7 @@ SPICE_VIEWER_PATHS = {
     'Linux': ['remote-viewer'],
     'Windows': ['VirtViewer v6.0-256\\bin\\remote-viewer'],
 }
+
 
 def parse_key_value_string(data):
     split = data.split(',')
@@ -34,6 +40,7 @@ def parse_key_value_string(data):
             result[''] = s
 
     return result
+
 
 async def get_vmid_resource(rtype, conn, remote_vmid):
     match = REMOTE_VMID_RE.match(remote_vmid)
@@ -56,6 +63,11 @@ async def get_vmid_resource(rtype, conn, remote_vmid):
     node = r[0]['node']
 
     return conn.nodes(node).url_join(rtype, str(vmid))
+
+
+def is_cygwin():
+    return platform.system().startswith('CYGWIN_NT')
+
 
 def find_path(paths):
     os_name = platform.system()
@@ -83,3 +95,6 @@ def find_path(paths):
                 return cmd
 
     return None
+
+def randstring(maxchars=8):
+    return ''.join(random.choice(string.ascii_letters) for _ in range(maxchars))

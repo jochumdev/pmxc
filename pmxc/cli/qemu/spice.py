@@ -1,11 +1,15 @@
-import os
 import logging
-from tempfile import mkstemp
+import os
 import subprocess
+from tempfile import mkstemp
 
 from pmxc.api2client.exception import HTTPException
-from pmxc.lib.utils import get_vmid_resource, SPICE_VIEWER_PATHS, find_path
 from pmxc.lib.remote import RemoteConnection
+from pmxc.lib.utils import SPICE_VIEWER_PATHS
+from pmxc.lib.utils import find_path
+from pmxc.lib.utils import get_vmid_resource
+from pmxc.lib.utils import is_cygwin
+from pmxc.lib.utils import randstring
 
 
 __all__ = [
@@ -34,10 +38,18 @@ async def execute(loop, config, args):
             for k, v in spdata.items():
                 filecontents += str(k) + "=" + str(v) + "\n"
 
-            fd, filename = mkstemp(text=True)
-            with open(filename, 'w') as fp:
-                fp.write(filecontents)
-            os.close(fd)
+            filename = None
+            if not is_cygwin():
+                fd, filename = mkstemp(text=True)
+
+                with open(filename, 'w') as fp:
+                    fp.write(filecontents)
+                os.close(fd)
+            else:
+                filename = os.path.join(os.getenv('USERPROFILE'), randstring() + ".vv")
+                with open(filename, 'w') as fp:
+                    fp.write(filecontents)
+
             executable = find_path(SPICE_VIEWER_PATHS)
             subprocess.Popen([executable, filename], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
