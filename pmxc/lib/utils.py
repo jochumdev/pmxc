@@ -35,14 +35,14 @@ async def get_vmid_resource(rtype, conn, remote_vmid):
 
     resources = await conn.cluster.resources.get()
 
-    lxc = [x for x in resources if x['type'] == rtype and x['vmid'] == vmid]
-    if len(lxc) < 1:
+    r = [x for x in resources if x['type'] == rtype and x['vmid'] == vmid]
+    if len(r) < 1:
         logging.error('VMID %d not found', vmid)
         return False
-    if len(lxc) > 1:
-        logging.error('More than one LXC with that vmid found: %d', vmid)
+    if len(r) > 1:
+        logging.error('More than one %s with that vmid found: %d', rtype, vmid)
         return False
 
-    node = lxc[0]['node']
+    node = r[0]['node']
 
-    return conn.nodes(node).lxc(vmid)
+    return conn.nodes(node).url_join(rtype, str(vmid))
