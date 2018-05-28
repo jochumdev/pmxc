@@ -1,7 +1,7 @@
 import logging
 
 from pmxc.api2client.exception import HTTPException
-from pmxc.cli.lxc.utils import get_lxc_resource
+from pmxc.lib.utils import get_vmid_resource
 from pmxc.lib.remote import RemoteConnection
 
 
@@ -21,11 +21,11 @@ def configure_argparse(subparser):
 async def execute(loop, config, args):
     try:
         async with RemoteConnection(loop, config, args['remote_vmid']) as conn:
-            lxc_resource = await get_lxc_resource(conn, args['remote_vmid'])
-            if not lxc_resource:
+            resource = await get_vmid_resource('lxc', conn, args['remote_vmid'])
+            if not resource:
                 return 1
 
-            await lxc_resource.status.resume.post()
+            await resource.status.resume.post()
             print("OK")
 
     except HTTPException as e:
