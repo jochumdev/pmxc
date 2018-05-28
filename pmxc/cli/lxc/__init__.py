@@ -19,7 +19,7 @@ def configure_argparse(subparser):
     global _cmds
 
     subparsers = subparser.add_subparsers(title="subcommands",
-                                       description="LinuX Container CLI commands",  # noqa
+                                       description=DESCRIPTION,
                                        dest="subcommand_lxc",
                                        help="Choose and run with --help")
     subparsers.required = True
