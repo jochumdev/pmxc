@@ -24,8 +24,11 @@ REQUIREMENTS = [
     'texttable',
 ]
 
-PERFORMANCE_REQUIRES = [
+UVLOOP_REQUIRES = [
     'uvloop',
+]
+
+PERFORMANCE_REQUIRES = [
     'cchardet',
     'aiodns',
 ]
@@ -70,5 +73,6 @@ setup(name='pmxc',
       extras_require={
           'development': DEVELOPMENT_REQUIRES,
           'performance': PERFORMANCE_REQUIRES,
+          'uvloop': UVLOOP_REQUIRES,
       },
       entry_points=ENTRY_POINTS)
