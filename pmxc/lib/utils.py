@@ -60,6 +60,9 @@ async def get_vmid_resource(rtype, conn, remote_vmid):
 def find_path(paths):
     os_name = platform.system()
 
+    if os_name.startswith('CYGWIN_NT'):
+        os_name = 'Windows'
+
     executables = paths[os_name]
 
     if os_name == 'Linux' or os_name == 'Darwin':
