@@ -1,6 +1,32 @@
 pmxc
 ====
 
+Install on *nix
++++++++++++++++
+
+
+
+Install on Windows
+++++++++++++++++++
+
+1.) Install babu from http://babun.github.io/
+2.) launch %HOMEPATH%/.babun/update.bat
+3.) Run babu
+
+... code:: bash
+
+    $ pact install python3 python3-pip
+
+    # Must point to /usr/bin/python3 if not uninstall python from Windows and reboot
+    $ which python3
+
+    $ git clone https://github.com/pcdummy/pmxc.git
+    $ cd pmxc
+    $ pip3 install -e .
+
+4.) Optional install "virt-viewer": https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x64-6.0.msi
+5.) Optional install "tightvnc": https://www.tightvnc.com/download.php
+
 
 The version parts
 +++++++++++++++++

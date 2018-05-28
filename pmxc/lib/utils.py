@@ -1,9 +1,14 @@
 import logging
+import os
+import platform
 import re
+import shutil
+
 
 __all__ = [
     'REMOTE_RE',
     'REMOTE_VMID_RE',
+    'SPICE_VIEWER_PATHS',
     'parse_key_value_string',
     'get_vmid_resource',
 ]
@@ -11,6 +16,11 @@ __all__ = [
 REMOTE_RE = re.compile(r'^(?P<remote>[\w\d\.\-\_]+):?')
 REMOTE_VMID_RE = re.compile(r'^(?P<remote>[\w\d\.\-\_]+):(?P<vmid>[\d]+)$')
 
+
+SPICE_VIEWER_PATHS = {
+    'Linux': ['remote-viewer'],
+    'Windows': ['VirtViewer v6.0-256\\bin\\remote-viewer'],
+}
 
 def parse_key_value_string(data):
     split = data.split(',')
@@ -46,3 +56,27 @@ async def get_vmid_resource(rtype, conn, remote_vmid):
     node = r[0]['node']
 
     return conn.nodes(node).url_join(rtype, str(vmid))
+
+def find_path(paths):
+    os_name = platform.system()
+
+    executables = paths[os_name]
+
+    if os_name == 'Linux' or os_name == 'Darwin':
+        for executable in executables:
+            cmd = shutil.which(executable)
+            if cmd is not None:
+                return cmd
+    elif os_name == 'Windows':
+        x32 = os.environ['ProgramFiles(x86)']
+        x64 = os.environ['ProgramW6432']
+
+        for executable in executables:
+            cmd = os.path.join(x64, executable)
+            if os.access(cmd, mode=os.F_OK | os.X_OK):
+                return cmd
+            cmd = os.path.join(x32, executable)
+            if os.access(cmd, mode=os.F_OK | os.X_OK):
+                return cmd
+
+    return None

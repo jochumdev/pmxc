@@ -50,7 +50,7 @@ ENTRY_POINTS = {
 }
 
 setup(name='pmxc',
-      version='5.2.0.dev0',
+      version='5.2.0.0.dev0',
       description='',
       long_description='{}\n\n{}\n\n{}'.format(
           README, CHANGELOG, CONTRIBUTORS),
