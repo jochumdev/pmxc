@@ -19,7 +19,6 @@ CHANGELOG = read_file('CHANGELOG.rst')
 CONTRIBUTORS = read_file('CONTRIBUTORS.rst')
 
 REQUIREMENTS = [
-    'ruamel.yaml',
     'aiohttp',
     'texttable',
 ]
