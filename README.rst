@@ -1,21 +1,27 @@
 pmxc
 ====
 
-Install on *nix
-+++++++++++++++
+Install on Debian
++++++++++++++
 
+.. code:: bash
+
+    sudo apt install python3-pip python-virtualenv git
+    virtualenv -p /usr/bin/python3 --no-site-packages venv
+    source venv/bin/activate
+    pip install -e ."[performance,uvloop]"
 
 
 Install on Windows
 ++++++++++++++++++
 
-1.) Install babu from http://babun.github.io/
-2.) launch %HOMEPATH%/.babun/update.bat
-3.) Run babu
+- Install babu from http://babun.github.io/
+- launch %HOMEPATH%/.babun/update.bat
+- Run babu
 
-... code:: bash
+.. code:: bash
 
-    $ pact install python3 python3-pip
+    $ pact install python3 python3-pip python3-devel
 
     # Must point to /usr/bin/python3 if not uninstall python from Windows and reboot
     $ which python3
@@ -24,8 +30,8 @@ Install on Windows
     $ cd pmxc
     $ pip3 install -e .
 
-4.) Optional install "virt-viewer": https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x64-6.0.msi
-5.) Optional install "tightvnc": https://www.tightvnc.com/download.php
+- Optional install "virt-viewer": https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x64-6.0.msi
+- Optional install "tightvnc": https://www.tightvnc.com/download.php
 
 
 The version parts
@@ -48,7 +54,7 @@ Linux
 Windows
 -------
 
-... code:: bash
+.. code:: bash
 
     $ pip install -e ."[development,performance]"
 
