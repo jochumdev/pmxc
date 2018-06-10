@@ -106,11 +106,11 @@ def _print_table(lxcs, args):
             key = "net" + str(i)
             if key in lxc:
                 if 'ip' in lxc[key]:
-                    if not net4:
+                    if net4 != '':
                         net4 += '\n'
                     net4 += lxc[key]['ip'] + " (" + lxc[key]['name'] + ")"
                 if 'ip6' in lxc[key]:
-                    if not net6:
+                    if net6 != '':
                         net6 += '\n'
                     net6 += lxc[key]['ip6'] + " (" + lxc[key]['name'] + ")"
 
