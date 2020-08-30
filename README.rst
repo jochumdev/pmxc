@@ -1,6 +1,5 @@
-pmxc - a console client for proxmox
-===================================
-
+pmxc - a console client for Proxmox VE
+======================================
 
 Install on Debian
 +++++++++++++++++
@@ -50,27 +49,11 @@ You can exit it with: CTRL+A q
 
 Have fun with pmxc i hope you like it as i do :)
 
-Install on Windows
+Windows
 ++++++++++++++++++
 
-- Install babu from http://babun.github.io/
-- launch %HOMEPATH%/.babun/update.bat
-- Run babu
-
-.. code:: bash
-
-    $ pact install python3 python3-pip python3-devel
-
-    # Must point to /usr/bin/python3 if not uninstall python from Windows and reboot
-    $ which python3
-
-    $ git clone https://github.com/pcdummy/pmxc.git
-    $ cd pmxc
-    $ pip3 install -e .
-
-- Optional install "virt-viewer": https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x64-6.0.msi
-- Optional install "tightvnc": https://www.tightvnc.com/download.php
-
+2018 I had success with babun on Windows, now lacking a Windows box and babun discontinued I don't have any clues.
+It should work unter cygwin though.
 
 The version parts
 +++++++++++++++++
@@ -95,14 +78,9 @@ Create a venv:
 
 .. code:: bash
 
-    $ venv/bin/pip install -e ."[development,performance,uvloop]"
+    $ venv/bin/pip install -e ".[development,performance,uvloop]"
 
-Windows
--------
-
-.. code:: bash
-
-    $ venv/bin/pip install -e ."[development,performance]"
+Now use ./venv/bin/pmxc instead of just plain `pmxc`
 
 License
 +++++++
