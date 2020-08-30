@@ -33,8 +33,8 @@ PERFORMANCE_REQUIRES = [
 ]
 
 DEVELOPMENT_REQUIRES = [
-    'pycodestyle==2.3.1', # version pin for flake8 and prospector
-    'pylint',
+    'pycodestyle==2.6.0', # version pin for flake8 and prospector
+    'pylint==2.5.2',
     'autopep8',
     'flake8',
     'ipython',
@@ -59,6 +59,8 @@ setup(name='pmxc',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
           'License :: OSI Approved :: MIT License',
       ],
       keywords='Console Proxmox PVE',

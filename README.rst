@@ -1,16 +1,52 @@
-pmxc
-====
+pmxc - a console client for proxmox
+===================================
+
 
 Install on Debian
-+++++++++++++
++++++++++++++++++
 
 .. code:: bash
 
-    sudo apt install python3-pip python-virtualenv git
-    virtualenv -p /usr/bin/python3 --no-site-packages venv
-    source venv/bin/activate
-    pip install -e ."[performance,uvloop]"
+    sudo apt install python3-pip virtualenv python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
+    sudo pip3 install . "[performance,uvloop]"
 
+Using pmxc
+++++++++++
+
+First create a remote:
+
+.. code:: bash
+
+    $ ./venv/bin/pmxc remote add -d pve01 https://pve01.fk.jochum.dev root@pam
+
+Now you can list VM's:
+
+.. code:: bash
+
+    $ ./venv/bin/pmxc qemu list pve01
+
+Or containers:
+
+.. code:: bash
+
+    $ ./venv/bin/pmxc lxc list pve01
+
+
+Or open a the virt-viewer on VM id **100**:
+
+.. code:: bash
+
+    $ ./venv/bin/pmxc qemu spice pve01:100
+
+Or open a shell on the container **101**:
+
+You can exit it with: CTRL+A q
+
+.. code:: bash
+
+    $ ./venv/bin/pmxc lxc enter pve01:101
+
+Have fun with pmxc i hope you like it as i do :)
 
 Install on Windows
 ++++++++++++++++++
@@ -49,14 +85,14 @@ Linux
 
 .. code:: bash
 
-    $ pip install -e ."[development,performance,uvloop]"
+    $ venv/bin/pip install -e ."[development,performance,uvloop]"
 
 Windows
 -------
 
 .. code:: bash
 
-    $ pip install -e ."[development,performance]"
+    $ venv/bin/pip install -e ."[development,performance]"
 
 License
 +++++++
@@ -67,4 +103,4 @@ MIT
 Copyright
 +++++++++
 
-Copyright (c) 2018 by René Jochum
+Copyright (c) 2018-2020 by René Jochum
