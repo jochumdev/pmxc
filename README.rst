@@ -7,36 +7,38 @@ Install on Debian
 
 .. code:: bash
 
-    sudo apt install python3-pip virtualenv python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
-    sudo pip3 install . "[performance,uvloop]"
+    sudo apt install python3-pip python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
+    sudo pip3 install ".[performance,uvloop]"
 
 Using pmxc
 ++++++++++
 
 First create a remote:
 
+WARNING: If you store the password it will be saved in plain text in ~/.config/pmxc/config.json
+
 .. code:: bash
 
-    $ ./venv/bin/pmxc remote add -d pve01 https://pve01.fk.jochum.dev root@pam
+    $ pmxc remote add -d pve01 https://pve01.fk.jochum.dev root@pam
 
 Now you can list VM's:
 
 .. code:: bash
 
-    $ ./venv/bin/pmxc qemu list pve01
+    $ pmxc qemu list pve01
 
 Or containers:
 
 .. code:: bash
 
-    $ ./venv/bin/pmxc lxc list pve01
+    $ pmxc lxc list pve01
 
 
 Or open a the virt-viewer on VM id **100**:
 
 .. code:: bash
 
-    $ ./venv/bin/pmxc qemu spice pve01:100
+    $ pmxc qemu spice pve01:100
 
 Or open a shell on the container **101**:
 
@@ -44,7 +46,7 @@ You can exit it with: CTRL+A q
 
 .. code:: bash
 
-    $ ./venv/bin/pmxc lxc enter pve01:101
+    $ pmxc lxc enter pve01:101
 
 Have fun with pmxc i hope you like it as i do :)
 
@@ -82,6 +84,14 @@ Development
 
 Linux
 -----
+
+Create a venv:
+
+.. code:: bash
+    $ sudo apt install virtualenv
+    $ virtualenv -p /usr/bin/python3 venv
+    $ source venv/bin/activate
+
 
 .. code:: bash
 
