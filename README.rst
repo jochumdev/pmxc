@@ -39,6 +39,14 @@ Or open a the virt-viewer on VM id **100**:
 
     $ pmxc qemu spice pve01:100
 
+If you add a serial console to a Linux VM (maybe also FreeBSD) you can enter it too now:
+
+This requires that you setup the console first inside the VM: https://www.rogerirwin.co.nz/open-source/enabling-a-serial-port-console/
+
+.. code:: bash
+
+    $ pmxc qemu enter pve01:100
+
 Or open a shell on the container **101**:
 
 You can exit it with: CTRL+A q
