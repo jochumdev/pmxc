@@ -1,10 +1,11 @@
+import re
+import pprint
 import asyncio
 from os import get_terminal_size
 import sys
 from functools import partial
 
 import aiohttp
-
 
 class WSTerminal(object):
     def __init__(self, loop, ws, user, ticket, *, terminal=None):
@@ -36,8 +37,12 @@ class WSTerminal(object):
         self._tasks.append(asyncio.Task(self._ping_websocket()))
         self._tasks.append(asyncio.Task(self._check_resize()))
 
-        # Start ws and terminal loop
-        await asyncio.wait([self._read_websocket(), self._read_terminal()])
+        if not self._stdin.isatty():
+            self._cmd = await self._loop.run_in_executor(None, partial(self._stdin.read))
+            await self._read_websocket()
+        else:
+            # Start ws and terminal loop
+            await asyncio.wait([self._read_websocket(), self._read_terminal()])
 
         # Stop all tasks
         for task in self._tasks:
@@ -101,6 +106,14 @@ class WSTerminal(object):
 
         self._ws_ready = True
 
+        if not self._stdin.isatty():
+            await asyncio.sleep(1)
+            message = "0:" + str(len(self._cmd)) + ":" + self._cmd
+            await self._ws.send_bytes(str.encode(message))
+
+        PROMPT_RE = re.compile(r'[\w]+@[\w]+:[~\w]+# ')
+
+        buff = ''
         try:
             async for msg in self._ws:
                 await asyncio.sleep(0)
@@ -111,6 +124,27 @@ class WSTerminal(object):
                 if msg.type == aiohttp.WSMsgType.BINARY:
                     message = msg.data.decode('utf8')
                     if message == 'OK':
+                        continue
+
+                    if not self._stdin.isatty():
+                        buff += message
+                        lines = buff.split("\n")
+                        if PROMPT_RE.search(lines[len(lines)-1]):
+                            self._closed = True
+                            break
+
+                        if len(lines) > 0 and lines[0].startswith("starting serial terminal on interface"):
+                            lines = lines[1:]
+
+                        if len(lines) > 0 and lines[0].rstrip("\x0d") + "\x0a" == self._cmd:
+                            lines = lines[1:]
+
+                        if len(lines) > 1:
+                            for line in lines:
+                                if len(line) > 0:
+                                    await self._loop.run_in_executor(None, partial(print, line))
+                            buff = ''
+
                         continue
 
                     await self._loop.run_in_executor(None, partial(self._stdout.write, message))
@@ -125,6 +159,15 @@ class WSTerminal(object):
                     break
         finally:
             self._closed = True
+
+        if not self._stdin.isatty():
+            lines = buff.split("\n")
+            if PROMPT_RE.search(lines[len(lines)-1]):
+                lines = lines[:-1]
+
+            for line in lines:
+                print(line)
+
 
     async def _read_terminal(self):
         try:

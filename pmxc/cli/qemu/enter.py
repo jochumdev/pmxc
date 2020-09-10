@@ -1,3 +1,4 @@
+import sys
 import logging
 
 import aiohttp
@@ -37,7 +38,9 @@ async def execute(loop, config, args):
                 "vncticket": termproxy['ticket'],
             })
 
-            print('Connecting: %s' % path_vncwebsocket)
+            if sys.stdin.isatty():
+                print('Connecting: %s' % path_vncwebsocket)
+
             async with conn.session.ws_connect(str(websocket_url), ssl=aiohttp.Fingerprint(conn.binary_fingerprint), protocols=('binary',)) as ws:
                 await WSTerminal(loop, ws, termproxy['user'], termproxy['ticket']).run()
 
