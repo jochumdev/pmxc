@@ -57,7 +57,7 @@ You can exit it with: CTRL+A q
 
 Have fun with pmxc i hope you like it as i do :)
 
-The pmxc {qemu|lxc} enter commands now support piping commands:
+The `pmxc {qemu|lxc} enter` commands now support piping commands:
 
 You need to enable automatic login to serial console as described here: https://wiki.gentoo.org/wiki/Automatic_login_to_virtual_console
 
