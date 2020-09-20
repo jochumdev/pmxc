@@ -1,22 +1,23 @@
+import click
 import logging
+from pmxc.lib.utils import coro
 
 __all__ = [
-    'DESCRIPTION',
-    'configure_argparse',
-    'execute',
+    'command',
 ]
 
-DESCRIPTION = 'Remove a remote'
+@click.command(name='remove', help="Remove a remote")
+@click.argument('remote')
+@coro
+@click.pass_context
+async def command(ctx, remote):
+    config = ctx.obj['config']
 
-def configure_argparse(subparser):
-    subparser.add_argument("name", help="The name of the remote")
-
-async def execute(loop, config, args):
-    if 'remotes' not in config or args['name'] not in config['remotes']:
-        logging.fatal('Unknown remote "%s"' % args['name'])
+    if 'remotes' not in config or remote not in config['remotes']:
+        logging.fatal('Unknown remote "%s"' % remote)
         return 1
 
-    del(config['remotes'][args['name']])
+    del(config['remotes'][remote])
 
     print("OK")
 

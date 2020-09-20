@@ -6,7 +6,7 @@ Install on Debian
 
 .. code:: bash
 
-    sudo apt install python3-pip python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
+    sudo apt install python3-click python3-pip python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
     sudo pip3 install ".[performance,uvloop]"
 
 Using pmxc
@@ -30,7 +30,7 @@ Or open a the virt-viewer on VM id **100**:
 
 .. code:: bash
 
-    $ pmxc spice pve01:100
+    $ pmxc spice pve01 100
 
 If you add a serial console to a Linux VM (maybe also FreeBSD) you can enter it too now:
 
@@ -38,7 +38,7 @@ This requires that you setup the console first inside the VM: https://www.rogeri
 
 .. code:: bash
 
-    $ pmxc enter pve01:100
+    $ pmxc enter pve01 100
 
 Or open a shell on the container **101**:
 
@@ -46,7 +46,7 @@ You can exit it with: CTRL+A q
 
 .. code:: bash
 
-    $ pmxc enter pve01:101
+    $ pmxc enter pve01 101
 
 Have fun with pmxc i hope you like it as i do :)
 
@@ -56,7 +56,7 @@ You need to enable automatic login to serial console as described here: https://
 
 .. code:: bash
 
-    $ echo "/bin/bash -c 'touch /test; echo bla'" | pmxc enter pve01:101
+    $ echo "/bin/bash -c 'touch /test; echo bla'" | pmxc enter pve01 101
 
 Windows
 ++++++++++++++++++

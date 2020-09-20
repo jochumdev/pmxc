@@ -20,6 +20,7 @@ CONTRIBUTORS = read_file('CONTRIBUTORS.rst')
 
 REQUIREMENTS = [
     'aiohttp',
+    'click',
     'texttable',
 ]
 
@@ -44,7 +45,7 @@ DEVELOPMENT_REQUIRES = [
 
 ENTRY_POINTS = {
     'console_scripts': [
-        'pmxc = pmxc.__main__:main'
+        'pmxc = pmxc.__main__:cli'
     ]
 }
 

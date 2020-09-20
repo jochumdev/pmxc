@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import platform
@@ -5,6 +6,7 @@ import re
 import shutil
 import string
 import random
+from functools import wraps
 
 
 __all__ = [
@@ -28,6 +30,19 @@ SPICE_VIEWER_PATHS = {
 }
 
 
+def coro(f):
+    """ AsnycIO Wrapper for Click
+    
+    Found here: https://github.com/pallets/click/issues/85
+    """
+
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(f(*args, **kwargs))
+
+    return wrapper
+
+
 def parse_key_value_string(data):
     split = data.split(',')
 
@@ -41,20 +56,21 @@ def parse_key_value_string(data):
 
     return result
 
-
-async def get_vmid_resource(conn, remote_vmid):
+async def get_vmid_resource(conn, remote_vmid, vmid=""):
     match = REMOTE_VMID_RE.match(remote_vmid)
-    if match is None:
+    if match is not None:
+        vmid = match.group('vmid')
+    elif vmid == "":
         logging.error('Not a remote:vmid: %s', remote_vmid)
         return False
 
-    vmid = int(match.group('vmid'))
+    vmid = int(vmid)
 
     resources = await conn.cluster.resources.get()
 
     r = [x for x in resources if (x['type'] == 'qemu' or x['type'] == 'lxc') and x['vmid'] == vmid]
     if len(r) < 1:
-        logging.error('VMID %d not found', vmid)
+        logging.error('VMID %d not found' % vmid)
         return False
     if len(r) > 1:
         logging.error('More than one resource with that vmid found: %d', vmid)
@@ -64,7 +80,6 @@ async def get_vmid_resource(conn, remote_vmid):
     rtype = r[0]['type']
 
     return conn.nodes(node).url_join(rtype, str(vmid))
-
 
 def is_cygwin():
     return platform.system().startswith('CYGWIN_NT')

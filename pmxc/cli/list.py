@@ -1,42 +1,30 @@
 import json
 import logging
 
+import click
 import texttable
 
 from pmxc.api2client.exception import HTTPException
 from pmxc.lib.remote import RemoteConnection
 from pmxc.lib.utils import parse_key_value_string
+from pmxc.lib.utils import coro
 
 
 __all__ = [
-    "DESCRIPTION",
-    "configure_argparse",
-    "execute",
+    "command",
 ]
 
-DESCRIPTION = "List Resources"
+@click.command(name='list', help="List Virtual Machines/Containers")
+@click.option('-f', '--format', 'format', help='output format [table|json] (default "table")', default='table')
+@click.option('-c', '--columns', 'columns', help='Columns (default "ntvhsarm46")', default='ntvhsarm46')
+@click.argument('remote')
+@coro
+@click.pass_context
+async def command(ctx, format, columns, remote):
 
-
-def configure_argparse(subparser):
-    subparser.add_argument('-f', '--format',
-                           help='output format [table|json] (default "table")',
-                           dest='format',
-                           default='table',
-                           required=False)
-
-    subparser.add_argument('-c', '--columns',
-                           help='Columns (default "ntvhsarm46")',
-                           dest='columns',
-                           default='ntvhsarm46',
-                           required=False)
-
-    subparser.add_argument("remote", help="The remote")
-
-
-async def execute(loop, config, args):
     resources = []
     try:
-        async with RemoteConnection(loop, config, args['remote']) as conn:
+        async with RemoteConnection(ctx.obj['loop'], ctx.obj['config'], remote) as conn:
             cresources = await conn.cluster.resources.get()
 
             for resource in filter(lambda x: (x['type'] == 'resource' or x['type'] == 'qemu'), cresources):
@@ -71,15 +59,15 @@ async def execute(loop, config, args):
         logging.fatal("HTTP Error: %s", e)
         return 1
 
-    if args['format'] == 'json':
+    if format == 'json':
         print(json.dumps(resources, sort_keys=True, indent=4))
     else:
-        _print_table(resources, args)
+        _print_table(resources, columns)
 
     return 0
 
-def _print_table(resources, args):
-    columns = list(args['columns'].replace(',', ''))
+def _print_table(resources, columns):
+    columns = list(columns.replace(',', ''))
 
     available_headers = {
         'n': ('Node', 10,),

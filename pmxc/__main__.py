@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+import click
 
 from pmxc import DEFAULT_CONFIG_FILE
 from pmxc.lib.loader import load_all
@@ -25,64 +26,32 @@ async def run(cmd, loop, config, args):
         sys.exit(result)
 
 
-def main(args=None):
-    """The main routine."""
-    if args is None:
-        args = sys.argv[1:]
+@click.group()
+@click.option('--config', help="Application configuration file", default=DEFAULT_CONFIG_FILE)
+@click.option('--debug', 'verbosity', flag_value=logging.DEBUG, default=False)
+@click.option('--quiet', 'verbosity', flag_value=logging.CRITICAL, default=False)
+@click.pass_context
+def cli(ctx, config, verbosity):
+    """proxmox Command-Line Interface"""
 
-    parser = argparse.ArgumentParser(
-        description="proxmox Command-Line Interface",
-    )
+    # ensure that ctx.obj exists and is a dict (in case `cli()` is called
+    # by means other than the `if` block below)
+    ctx.ensure_object(dict)
 
-    subparsers = parser.add_subparsers(title="subcommands",
-                                       description="Main pmx CLI commands",  # noqa
-                                       dest="subcommand",
-                                       help="Choose and run with --help")
-    subparsers.required = True
-
-    cmds = load_all(pmxc.cli)
-
-    for name in sorted(cmds.keys()):
-        if not hasattr(cmds[name], 'DESCRIPTION'):
-            # Not a cmd, maybe a helper?
-            continue
-
-        subparser = subparsers.add_parser(name, help=cmds[name].DESCRIPTION)
-
-        subparser.add_argument("--config",
-                               help="Application configuration file",
-                               dest="yaml_file",
-                               required=False,
-                               default=DEFAULT_CONFIG_FILE)
-
-        subparser.add_argument("-q", "--quiet", action="store_const",
-                               const=logging.CRITICAL, dest="verbosity",
-                               help="Show only critical errors.")
-
-        subparser.add_argument("-d", "--debug", action="store_const",
-                               const=logging.DEBUG, dest="verbosity",
-                               help="Show all messages, including debug messages.")  # noqa
-
-        cmds[name].configure_argparse(subparser)
-
-    # Parse command-line arguments
-    parsed_args = vars(parser.parse_args(args))
-
-    # Initialize logging
-    level = parsed_args.get('verbosity') or DEFAULT_LOG_LEVEL
+    level = verbosity or DEFAULT_LOG_LEVEL
     logging.basicConfig(level=level, format=DEFAULT_LOG_FORMAT)
-
-    config = load_config(parsed_args['yaml_file'])
-
-    # Execute the command
-    which_command = parsed_args['subcommand']
 
     if UVLOOP_AVAILABLE:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(run(cmds[which_command], loop, config, parsed_args))
-    finally:
-        loop.close()
-        save_config(config, parsed_args['yaml_file'])
+    ctx.obj['config'] = load_config(config)
+    ctx.obj['loop'] = asyncio.get_event_loop()
+
+
+# Load all commands (importlib.import_module) and add them as command to cli
+cmds = load_all(pmxc.cli)
+for _, cmd in cmds.items():
+    if hasattr(cmd, 'command'):
+        cli.add_command(cmd.command)
+    if hasattr(cmd, 'group'):
+        cli.add_command(cmd.group)

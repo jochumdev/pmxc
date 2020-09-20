@@ -1,44 +1,33 @@
+import click
 import logging
 
 from pmxc.api2client.exception import HTTPException
 from pmxc.lib.utils import get_vmid_resource
 from pmxc.lib.remote import RemoteConnection
+from pmxc.lib.utils import coro
 
 
 __all__ = [
-    "DESCRIPTION",
-    "configure_argparse",
-    "execute",
+    "command",
 ]
 
-DESCRIPTION = "Shutdown a Virtual Machine/Container"
-
-
-def configure_argparse(subparser):
-    subparser.add_argument("remote_vmid", help="The remote:vmid")
-
-    subparser.add_argument('-f', '--force',
-                           help='Force (default "False")',
-                           dest='force',
-                           action="store_true",
-                           default=False,
-                           required=False)
-
-    subparser.add_argument('-t', '--timeout',
-                           help='Timeout (default "60")',
-                           dest='timeout',
-                           default="60",
-                           required=False)
-
-
-async def execute(loop, config, args):
+@click.command(name='shutdown', help="Shutdown a Virtual Machine/Container")
+@click.option('-f', '--force/--no-force', 'force', help='Force (default "False")', default=False)
+@click.option('-t', '--timeout', 'timeout', help='Timeout (default "60")', default=60)
+@click.argument('remote')
+@click.argument('vmid', default="")
+@coro
+@click.pass_context
+async def command(ctx, force, timeout, remote, vmid):
+    loop = ctx.obj['loop']
+    config = ctx.obj['config']
     try:
-        async with RemoteConnection(loop, config, args['remote_vmid']) as conn:
-            resource = await get_vmid_resource(conn, args['remote_vmid'])
+        async with RemoteConnection(loop, config, remote) as conn:
+            resource = await get_vmid_resource(conn, remote, vmid)
             if not resource:
                 return 1
 
-            await resource.status.shutdown.post(timeout=int(args['timeout']), forceStop=0 if args['force'] else 1)
+            await resource.status.shutdown.post(timeout=int(timeout), forceStop=0 if force else 1)
             print("OK")
 
     except HTTPException as e:
