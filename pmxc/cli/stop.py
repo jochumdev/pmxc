@@ -11,7 +11,7 @@ __all__ = [
     "execute",
 ]
 
-DESCRIPTION = "Start a LinuX Container"
+DESCRIPTION = "Stop (kill) a Virtual Machine/Container"
 
 
 def configure_argparse(subparser):
@@ -21,11 +21,11 @@ def configure_argparse(subparser):
 async def execute(loop, config, args):
     try:
         async with RemoteConnection(loop, config, args['remote_vmid']) as conn:
-            resource = await get_vmid_resource('lxc', conn, args['remote_vmid'])
+            resource = await get_vmid_resource(conn, args['remote_vmid'])
             if not resource:
                 return 1
 
-            await resource.status.start.post()
+            await resource.status.stop.post()
             print("OK")
 
     except HTTPException as e:

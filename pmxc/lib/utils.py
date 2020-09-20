@@ -42,7 +42,7 @@ def parse_key_value_string(data):
     return result
 
 
-async def get_vmid_resource(rtype, conn, remote_vmid):
+async def get_vmid_resource(conn, remote_vmid):
     match = REMOTE_VMID_RE.match(remote_vmid)
     if match is None:
         logging.error('Not a remote:vmid: %s', remote_vmid)
@@ -52,15 +52,16 @@ async def get_vmid_resource(rtype, conn, remote_vmid):
 
     resources = await conn.cluster.resources.get()
 
-    r = [x for x in resources if x['type'] == rtype and x['vmid'] == vmid]
+    r = [x for x in resources if (x['type'] == 'qemu' or x['type'] == 'lxc') and x['vmid'] == vmid]
     if len(r) < 1:
         logging.error('VMID %d not found', vmid)
         return False
     if len(r) > 1:
-        logging.error('More than one %s with that vmid found: %d', rtype, vmid)
+        logging.error('More than one resource with that vmid found: %d', vmid)
         return False
 
     node = r[0]['node']
+    rtype = r[0]['type']
 
     return conn.nodes(node).url_join(rtype, str(vmid))
 

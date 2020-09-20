@@ -11,7 +11,7 @@ __all__ = [
     "execute",
 ]
 
-DESCRIPTION = "Shutdown a QEMU Virtual Machine"
+DESCRIPTION = "Shutdown a Virtual Machine/Container"
 
 
 def configure_argparse(subparser):
@@ -34,7 +34,7 @@ def configure_argparse(subparser):
 async def execute(loop, config, args):
     try:
         async with RemoteConnection(loop, config, args['remote_vmid']) as conn:
-            resource = await get_vmid_resource('qemu', conn, args['remote_vmid'])
+            resource = await get_vmid_resource(conn, args['remote_vmid'])
             if not resource:
                 return 1
 

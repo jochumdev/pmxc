@@ -166,7 +166,7 @@ class WSTerminal(object):
                 lines = lines[:-1]
 
             for line in lines:
-                print(line)
+                await self._loop.run_in_executor(None, partial(print, line))
 
 
     async def _read_terminal(self):

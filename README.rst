@@ -20,24 +20,17 @@ WARNING: If you store the password it will be saved in plain text in ~/.config/p
 
     $ pmxc remote add -d pve01 https://pve01.fk.jochum.dev root@pam
 
-Now you can list VM's:
+Now you can list VM's/Container's:
 
 .. code:: bash
 
-    $ pmxc qemu list pve01
-
-Or containers:
-
-.. code:: bash
-
-    $ pmxc lxc list pve01
-
+    $ pmxc list pve01
 
 Or open a the virt-viewer on VM id **100**:
 
 .. code:: bash
 
-    $ pmxc qemu spice pve01:100
+    $ pmxc spice pve01:100
 
 If you add a serial console to a Linux VM (maybe also FreeBSD) you can enter it too now:
 
@@ -45,7 +38,7 @@ This requires that you setup the console first inside the VM: https://www.rogeri
 
 .. code:: bash
 
-    $ pmxc qemu enter pve01:100
+    $ pmxc enter pve01:100
 
 Or open a shell on the container **101**:
 
@@ -53,17 +46,17 @@ You can exit it with: CTRL+A q
 
 .. code:: bash
 
-    $ pmxc lxc enter pve01:101
+    $ pmxc enter pve01:101
 
 Have fun with pmxc i hope you like it as i do :)
 
-The `pmxc {qemu|lxc} enter` commands now support piping commands:
+The `pmxc enter` command now supports piping commands:
 
 You need to enable automatic login to serial console as described here: https://wiki.gentoo.org/wiki/Automatic_login_to_virtual_console
 
 .. code:: bash
 
-    $ echo "/bin/bash -c 'touch /test; echo bla'" | pmxc qemu enter pve01:101
+    $ echo "/bin/bash -c 'touch /test; echo bla'" | pmxc enter pve01:101
 
 Windows
 ++++++++++++++++++
