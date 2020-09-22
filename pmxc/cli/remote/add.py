@@ -1,3 +1,4 @@
+import sys
 import click
 import getpass
 import logging
@@ -9,6 +10,7 @@ from pmxc.api2client.exception import VerifyException
 from pmxc.lib.utils import REMOTE_RE
 from pmxc.cli.remote import group
 from pmxc.lib.utils import coro
+from pmxc.lib.config import save_config
 
 
 __all__ = [
@@ -35,14 +37,13 @@ async def command(ctx, name, host, username):
 
     match = REMOTE_RE.match(name)
     if match is None:
-        logging.fatal('"%s" is a invalid remote name', name)
+        print('"%s" is a invalid remote name' % name, file=sys.stderr)
         return 1
 
     name = match.group('remote')
 
     if 'remotes' in config and name in config['remotes']:
-        logging.fatal('The remote "%s" has already been registered',
-                      name)
+        print('The remote "%s" has already been registered' % name, file=sys.stderr)
         return 1
 
     match = re.fullmatch(
@@ -51,7 +52,7 @@ async def command(ctx, name, host, username):
         r":?(?P<port>[0-9]+)?", host
     )
     if match is None:
-        logging.fatal('The given host "%s" is not valid', host)
+        print('The given host "%s" is not valid' % host, file=sys.stderr)
         return 1
 
     password = getpass.getpass(
@@ -71,11 +72,11 @@ async def command(ctx, name, host, username):
                 await conn.login(username, password)
 
     except VerifyException:
-        logging.fatal('Aborting, you didn\'t verify the fingerprint')
+        print('Aborting, you didn\'t verify the fingerprint', file=sys.stderr)
         return 1
 
     except AuthenticationException:
-        logging.fatal("Aborting, authentication failed")
+        print("Aborting, authentication failed", file=sys.stderr)
         return 1
 
     if 'remotes' not in config:
@@ -89,5 +90,7 @@ async def command(ctx, name, host, username):
     }
     if password != '':
         config['remotes'][name]['password'] = password
+
+    save_config(config, ctx.obj['config_path'])
 
     return 0

@@ -18,7 +18,7 @@ WARNING: If you store the password it will be saved in plain text in ~/.config/p
 
 .. code:: bash
 
-    $ pmxc remote add -d pve01 https://pve01.fk.jochum.dev root@pam
+    $ pmxc remote add pve01 https://pve01.fk.jochum.dev:8006 root@pam
 
 Now you can list VM's/Container's:
 

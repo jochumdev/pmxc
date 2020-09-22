@@ -6,7 +6,6 @@ import click
 from pmxc import DEFAULT_CONFIG_FILE
 from pmxc.lib.loader import load_all
 from pmxc.lib.config import load_config
-from pmxc.lib.config import save_config
 import pmxc.cli
 
 import asyncio
@@ -44,6 +43,7 @@ def cli(ctx, config, verbosity):
     if UVLOOP_AVAILABLE:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+    ctx.obj['config_path'] = config
     ctx.obj['config'] = load_config(config)
     ctx.obj['loop'] = asyncio.get_event_loop()
 
