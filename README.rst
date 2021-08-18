@@ -7,7 +7,7 @@ Install on Debian
 .. code:: bash
 
     sudo apt install python3-click python3-pip python3-uvloop python3-aiohttp python3-texttable python3-aiodns python3-chardet virt-viewer
-    sudo pip3 install ".[performance,uvloop]"
+    sudo pip3 install "<path-to-the-git-dir>[performance,uvloop]"
 
 Using pmxc
 ++++++++++
@@ -61,7 +61,7 @@ You need to enable automatic login to serial console as described here: https://
 Windows
 ++++++++++++++++++
 
-2018 I had success with babun on Windows, now lacking a Windows box and babun discontinued I don't have any clues.
+2018 I had success with babun on Windows, now lacking a Windows box and babun discontinued I have no clue.
 It should work unter cygwin though.
 
 The version parts
